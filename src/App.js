@@ -1,33 +1,41 @@
-import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import Header from './components/Header';
-import Node from './components/Node';
 import ScrollToTop from './components/ScrollToTop';
-import { troubleshootingData } from './data/troubleshootingData';
+
+// Import page components
+import HomePage from './pages/HomePage';
+import SVLSPage from './pages/SVLSPage';
+import DMIPage from './pages/DMIPage';
 
 function App() {
   return (
-    <div className="app-wrapper">
-      {/* Decorative floating emojis */}
-      <div className="emoji-decoration">☎️</div>
-      <div className="emoji-decoration">🎧</div>
-      <div className="emoji-decoration">👤</div>
-      <div className="emoji-decoration">📞</div>
+    <Router>
+      <div className="app-wrapper">
+        {/* Decorative floating emojis */}
+        <div className="emoji-decoration">⚡</div>
+        <div className="emoji-decoration">☁️</div>
+        <div className="emoji-decoration">🔧</div>
+        <div className="emoji-decoration">⚙️</div>
 
-      <div className="container">
-        <Header />
-        
-        <div className="content-wrapper">
-          <div className="mindmap">
-            {troubleshootingData.map((node, index) => (
-              <Node key={node.id} node={node} index={index} />
-            ))}
-          </div>
+        <div className="container">
+          <Routes>
+            {/* Home page with section selection */}
+            <Route path="/" element={<HomePage />} />
+            
+            {/* SVLS page with serverless troubleshooting */}
+            <Route path="/svls" element={<SVLSPage />} />
+            
+            {/* DMI page with current Amazon Connect content */}
+            <Route path="/dmi" element={<DMIPage />} />
+            
+            {/* Redirect any unknown routes to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </div>
-      </div>
 
-      <ScrollToTop />
-    </div>
+        <ScrollToTop />
+      </div>
+    </Router>
   );
 }
 
