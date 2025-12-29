@@ -2793,3 +2793,43 @@ header {
     background: rgba(255, 255, 255, 0.1);
   }
 }
+/* Dynamic Quick Links Enhancement */
+.footer-section h4:has(+ ul li a[href]) {
+  position: relative;
+}
+
+.footer-section h4:contains("Quick Links")::after {
+  content: "✨";
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-left: 5px;
+}
+
+/* Smooth transition for dynamic link updates */
+.footer-section ul li {
+  transition: all 0.3s ease;
+}
+
+.footer-section ul li a {
+  transition: all 0.3s ease;
+}
+
+/* Subtle animation for recently updated links */
+@keyframes quickLinkUpdate {
+  0% { background-color: rgba(255, 255, 255, 0.1); }
+  100% { background-color: transparent; }
+}
+
+.footer-section ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin: -2px -6px;
+}
+
+/* Responsive behavior for dynamic links */
+@media (max-width: 768px) {
+  .footer-section ul li {
+    margin-bottom: 8px;
+  }
+}

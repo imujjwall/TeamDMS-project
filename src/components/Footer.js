@@ -1,4 +1,8 @@
+import { usePageTracking } from '../hooks/usePageTracking';
+
 const Footer = () => {
+  const quickLinks = usePageTracking();
+
   return (
     <footer className="app-footer">
       <div className="footer-content">
@@ -9,10 +13,11 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Quick Links</h4>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/dms">DMS</a></li>
-            <li><a href="/database">Database</a></li>
-            <li><a href="/analytics">Analytics</a></li>
+            {quickLinks.map((link, index) => (
+              <li key={`${link.path}-${index}`}>
+                <a href={link.path}>{link.title}</a>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="footer-section">
@@ -26,7 +31,7 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Developer</h4>
           <div className="developer-info">
-            <p>Developed by <strong>SVLS Team [Night Site]</strong></p>
+            <p>Developed by <strong>Ujjwal Kumar</strong></p>
             <div className="social-links">
               <a href="https://phonetool.amazon.com/users/imujjwal" target="_blank" rel="noopener noreferrer" className="github-link">
                 <span className="github-icon">👤</span>
