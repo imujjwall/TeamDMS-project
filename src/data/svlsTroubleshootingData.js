@@ -247,39 +247,43 @@ const svlsTroubleshootingData = [
             title: "Additional Documentation & Resources",
             content: `
               <div class="troubleshooting">
-                <div class="section-header">Internal Knowledge Base & Training</div>
-                <p>Access comprehensive API Gateway documentation and training materials for deeper troubleshooting and learning.</p>
+                <div class="section-header">Quick Access</div>
+                <p><strong>Need more help?</strong> Access comprehensive API Gateway documentation and training materials for deeper troubleshooting and learning.</p>
                 
-                <div class="section-header">📚 Knowledge Base</div>
-                <div class="best-practices">
+                <div class="section-header">Internal Resources</div>
+                <div class="checklist">
                   <ul>
-                    <li><strong>API Gateway FAQ:</strong> Frequently asked questions and common issues</li>
-                    <li>Covers common troubleshooting scenarios and solutions</li>
-                    <li>Updated regularly with new issues and resolutions</li>
+                    <li><strong>Knowledge Base FAQ:</strong> Frequently asked questions and common issues</li>
+                    <li><strong>Training Materials:</strong> Best practices and advanced troubleshooting techniques</li>
+                    <li><strong>Updated Content:</strong> Regularly updated with latest troubleshooting methods</li>
                   </ul>
-                  <div class="playbook-reference">
-                    <a href="https://w.amazon.com/bin/view/AmazonWebServices/SalesSupport/DeveloperSupport/Internal/DMS/APIGateway/KnowledgeBase/FAQ" class="playbook-link" target="_blank">
-                      🔗 API Gateway Knowledge Base FAQ
-                    </a>
-                  </div>
                 </div>
 
-                <div class="section-header">🎓 Training Resources</div>
+                <div class="section-header">Quick Access Links</div>
                 <div class="best-practices">
-                  <ul>
-                    <li><strong>Training Materials:</strong> Comprehensive learning resources</li>
-                    <li>Best practices and advanced troubleshooting techniques</li>
-                    <li>Service-specific training modules and guides</li>
-                  </ul>
-                  <div class="playbook-reference">
-                    <a href="https://w.amazon.com/bin/view/AmazonWebServices/SalesSupport/DeveloperSupport/Internal/DMS/APIGateway/Training/Resources" class="playbook-link" target="_blank">
-                      🔗 API Gateway Training Resources
-                    </a>
-                  </div>
+                  <ol>
+                    <li><strong>Knowledge Base:</strong> Search FAQ for common API Gateway issues</li>
+                    <li><strong>Training Resources:</strong> Access comprehensive learning materials</li>
+                    <li><strong>Internal Docs:</strong> Service-specific troubleshooting guides</li>
+                  </ol>
+                </div>
+
+                <div class="playbook-reference">
+                  <h4>📖 Internal Playbook Reference</h4>
+                  <a href="https://w.amazon.com/bin/view/AmazonWebServices/SalesSupport/DeveloperSupport/Internal/DMS/APIGateway/KnowledgeBase/FAQ" class="playbook-link" target="_blank">
+                    API Gateway Knowledge Base FAQ
+                  </a>
+                </div>
+
+                <div class="playbook-reference">
+                  <h4>🎓 Training Materials</h4>
+                  <a href="https://w.amazon.com/bin/view/AmazonWebServices/SalesSupport/DeveloperSupport/Internal/DMS/APIGateway/Training/Resources" class="playbook-link" target="_blank">
+                    API Gateway Training Resources
+                  </a>
                 </div>
 
                 <div class="note">
-                  💡 These internal resources provide in-depth knowledge and are regularly updated with the latest troubleshooting techniques and best practices.
+                  💡 These internal resources are your go-to for complex API Gateway issues and continuous learning!
                 </div>
               </div>
             `

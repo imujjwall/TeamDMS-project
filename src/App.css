@@ -341,6 +341,7 @@ h1 {
 .node[id="cors-blocked"] .node-title span::before { content: '🚫' !important; }
 .node[id="auth-failed"] .node-title span::before { content: '🔐' !important; }
 .node[id="too-many-requests"] .node-title span::before { content: '🚦' !important; }
+.node[id="apigateway-additional-docs"] .node-title span::before { content: '📚' !important; }
 
 /* Step Functions Issues */
 .node[id="workflow-fails"] .node-title span::before { content: '💥' !important; }
@@ -358,10 +359,14 @@ h1 {
 .node[id="security-checklist"] .node-title span::before { content: '🔒' !important; }
 .node[id="cost-optimization"] .node-title span::before { content: '💰' !important; }
 
-/* Enhanced styling for service-specific approach */
+/* =================================================================
+   UNIFORM SERVICE STYLING SYSTEM
+   ================================================================= */
+
+/* Main Service Categories - Each service gets its own distinct color */
 .node[id="lambda-service"] {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
-  border-left: 5px solid #ff9800;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border-left: 5px solid #ffc107;
 }
 
 .node[id="apigateway-service"] {
@@ -384,15 +389,103 @@ h1 {
   border-left: 5px solid #28a745;
 }
 
-/* Make problem nodes more prominent */
-.node[id*="lambda-"], .node[id*="cors-"], .node[id*="auth-"], .node[id*="too-many"], .node[id*="workflow-"] {
+/* =================================================================
+   UNIFORM CHILD SECTION STYLING BY TYPE
+   ================================================================= */
+
+/* Problem/Issue Sections - Red theme for all troubleshooting issues */
+.node[id*="timeout"], .node[id*="error"], .node[id*="slow"], .node[id*="fail"], 
+.node[id*="stuck"], .node[id*="blocked"], .node[id*="refused"], .node[id*="ssl"], 
+.node[id*="tls"], .node[id*="connection"], .node[id*="dns"] {
   background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
   border-left: 5px solid #dc3545;
 }
 
-.node[id*="lambda-"]:hover, .node[id*="cors-"]:hover, .node[id*="auth-"]:hover, .node[id*="too-many"]:hover, .node[id*="workflow-"]:hover {
+/* Service-specific sections inherit their parent service color */
+.node[id*="lambda-"] {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border-left: 5px solid #ffc107;
+}
+
+.node[id*="cors-"], .node[id*="auth-"], .node[id*="too-many"], .node[id*="apigateway-"] {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 5px solid #2196f3;
+}
+
+.node[id*="workflow-"], .node[id*="stepfunctions-"] {
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+  border-left: 5px solid #9c27b0;
+}
+
+/* Monitoring and debugging tool sections - Teal theme */
+.node[id*="cloudwatch-"], .node[id*="xray-"], .node[id*="monitoring"], 
+.node[id*="debug"], .node[id*="trace"], .node[id*="log"] {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  border-left: 5px solid #17a2b8;
+}
+
+/* Best practices and optimization sections - Green theme */
+.node[id*="performance-"], .node[id*="security-"], .node[id*="cost-"], 
+.node[id*="optimization"], .node[id*="best-practice"], .node[id*="checklist"] {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-left: 5px solid #28a745;
+}
+
+/* Documentation and resource sections - Light blue theme */
+.node[id*="additional-docs"], .node[id*="documentation"], .node[id*="resource"], 
+.node[id*="reference"], .node[id*="guide"], .node[id*="approach"] {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  border-left: 5px solid #17a2b8;
+}
+
+/* General guidance and approach sections - Light gray theme */
+.node[id*="approach"], .node[id*="guidance"], .node[id*="general"] {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-left: 5px solid #6c757d;
+}
+
+/* =================================================================
+   UNIFORM HOVER EFFECTS
+   ================================================================= */
+
+/* Service-specific hover effects */
+.node[id*="lambda-"]:hover {
   transform: translateX(12px);
-  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.2);
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+}
+
+.node[id*="cors-"]:hover, .node[id*="auth-"]:hover, .node[id*="too-many"]:hover, .node[id*="apigateway-"]:hover {
+  transform: translateX(12px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+}
+
+.node[id*="workflow-"]:hover, .node[id*="stepfunctions-"]:hover {
+  transform: translateX(12px);
+  box-shadow: 0 8px 25px rgba(156, 39, 176, 0.3);
+}
+
+/* Type-based hover effects */
+.node[id*="cloudwatch-"]:hover, .node[id*="xray-"]:hover, .node[id*="additional-docs"]:hover, 
+.node[id*="monitoring"]:hover, .node[id*="debug"]:hover, .node[id*="documentation"]:hover {
+  transform: translateX(12px);
+  box-shadow: 0 8px 25px rgba(23, 162, 184, 0.3);
+}
+
+.node[id*="performance-"]:hover, .node[id*="security-"]:hover, .node[id*="cost-"]:hover, 
+.node[id*="optimization"]:hover, .node[id*="best-practice"]:hover {
+  transform: translateX(12px);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
+.node[id*="timeout"]:hover, .node[id*="error"]:hover, .node[id*="slow"]:hover, 
+.node[id*="fail"]:hover, .node[id*="stuck"]:hover, .node[id*="blocked"]:hover {
+  transform: translateX(12px);
+  box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+}
+
+.node[id*="approach"]:hover, .node[id*="guidance"]:hover, .node[id*="general"]:hover {
+  transform: translateX(12px);
+  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
 }
 
 .toggle {
