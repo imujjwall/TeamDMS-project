@@ -15,15 +15,12 @@ const EnhancedPageLayout = ({
   const [filteredData, setFilteredData] = useState(data);
   const [allExpanded, setAllExpanded] = useState(false);
 
-  // Handle search results and filter content accordingly
   const handleSearchResults = (results) => {
     setSearchResults(results);
     
     if (results.length === 0) {
-      // No search active, show all content
       setFilteredData(data);
     } else {
-      // Filter to show only matching nodes and their parents
       const filterNodes = (nodes) => {
         return nodes.map(node => {
           const hasMatch = results.some(result => result.id === node.id);
@@ -34,7 +31,6 @@ const EnhancedPageLayout = ({
             return {
               ...node,
               children: filteredChildren,
-              // Add highlighting for matched content
               content: hasMatch && node.content ? 
                 highlightSearchTerm(node.content, getSearchTerm()) : 
                 node.content
@@ -48,9 +44,7 @@ const EnhancedPageLayout = ({
     }
   };
 
-  // Auto-expand nodes that contain search matches
   const handleExpandNodes = (nodeIds) => {
-    // Use setTimeout to ensure DOM is ready for manipulation
     setTimeout(() => {
       nodeIds.forEach(nodeId => {
         const element = document.getElementById(nodeId);
@@ -64,23 +58,18 @@ const EnhancedPageLayout = ({
     }, 100);
   };
 
-  // Scroll to and highlight matching search result
   const handleScrollToMatch = (nodeId) => {
-    // Delay to ensure node is expanded first
     setTimeout(() => {
       const element = document.getElementById(nodeId);
       if (element) {
-        // Add visual highlight
         element.classList.add('search-highlight');
         
-        // Smooth scroll to element
         element.scrollIntoView({ 
           behavior: 'smooth', 
           block: 'center',
           inline: 'nearest'
         });
         
-        // Remove highlight after animation completes
         setTimeout(() => {
           element.classList.remove('search-highlight');
         }, 3000);
@@ -89,7 +78,6 @@ const EnhancedPageLayout = ({
   };
 
   const getSearchTerm = () => {
-    // Get search term from SearchBox component
     const searchInput = document.querySelector('.search-input');
     return searchInput ? searchInput.value : '';
   };

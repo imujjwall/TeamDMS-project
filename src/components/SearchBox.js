@@ -1,17 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
-  // Flatten the hierarchical data for searching
   const flattenData = (nodes, path = []) => {
     let flattened = [];
     
     nodes.forEach(node => {
       const currentPath = [...path, node.title];
       
-      // Add current node
       flattened.push({
         id: node.id,
         title: node.title,
@@ -20,7 +18,6 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
         pathArray: currentPath
       });
       
-      // Add children recursively
       if (node.children) {
         flattened = [...flattened, ...flattenData(node.children, currentPath)];
       }
@@ -29,7 +26,7 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     return flattened;
   };
 
-  const searchInContent = (term) => {
+  const searchInContent = useCallback((term) => {
     if (!term.trim()) {
       setSearchResults([]);
       onSearchResults([]);
@@ -45,14 +42,11 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     setSearchResults(results);
     onSearchResults(results);
     
-    // Auto-expand nodes that contain matches
     if (results.length > 0) {
       const nodeIdsToExpand = new Set();
       results.forEach(result => {
-        // Add all parent nodes in the path to expansion set
         result.pathArray.forEach((_, index) => {
           if (index < result.pathArray.length - 1) {
-            // Find the node ID for this path segment
             const pathSegment = result.pathArray.slice(0, index + 1);
             const nodeId = findNodeIdByPath(data, pathSegment);
             if (nodeId) {
@@ -65,7 +59,7 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
       
       onExpandNodes(Array.from(nodeIdsToExpand));
     }
-  };
+  }, [data, onSearchResults, onExpandNodes]);
 
   const findNodeIdByPath = (nodes, pathArray, currentPath = []) => {
     for (const node of nodes) {
@@ -90,11 +84,10 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     }, 300);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm]);
+  }, [searchTerm, searchInContent]);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && searchResults.length > 0) {
-      // Scroll to first match
       const firstMatch = searchResults[0];
       onScrollToMatch(firstMatch.id);
     }
@@ -110,15 +103,12 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     
     switch (platform) {
       case 'repost':
-        // AWS re:Post correct search URL structure
         url = `https://repost.aws/search/content?globalSearch=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}`;
         break;
       case 'guide':
-        // guide.aws.dev correct search URL structure
         url = `https://guide.aws.dev/search/content?globalSearch=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}`;
         break;
       case 'google':
-        // Google search for AWS documentation
         url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}+AWS`;
         break;
       default:

@@ -210,7 +210,6 @@ export const elbTroubleshootingData = [
   }
 ];
 
-// Add more comprehensive ELB troubleshooting data
 const additionalELBData = [
   {
     id: "clb",
@@ -659,5 +658,4 @@ const additionalELBData = [
   }
 ];
 
-// Merge additional data with existing data
 elbTroubleshootingData[0].children.push(...additionalELBData);
