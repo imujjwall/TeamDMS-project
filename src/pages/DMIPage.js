@@ -1,12 +1,12 @@
 import EnhancedPageLayout from '../components/EnhancedPageLayout';
-import { troubleshootingData } from '../data/troubleshootingData';
+import { dmitroubleshootingdata } from '../data/dmitroubleshootingdata';
 
 function DMIPage() {
   return (
     <EnhancedPageLayout
       title=""
       subtitle=""
-      data={troubleshootingData}
+      data={dmitroubleshootingdata}
       backLink="/dms"
       headerProps={{
         title: "Developer Mobile, Messaging & IoT (DMI)",

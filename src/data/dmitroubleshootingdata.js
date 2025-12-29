@@ -1,4 +1,4 @@
-export const troubleshootingData = [
+export const dmitroubleshootingdata = [
   {
     id: "root",
     title: "Amazon Connect Support Knowledge",
