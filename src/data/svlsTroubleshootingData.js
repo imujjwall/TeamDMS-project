@@ -241,6 +241,48 @@ const svlsTroubleshootingData = [
                 </div>
               </div>
             `
+          },
+          {
+            id: "apigateway-additional-docs",
+            title: "Additional Documentation & Resources",
+            content: `
+              <div class="troubleshooting">
+                <div class="section-header">Internal Knowledge Base & Training</div>
+                <p>Access comprehensive API Gateway documentation and training materials for deeper troubleshooting and learning.</p>
+                
+                <div class="section-header">📚 Knowledge Base</div>
+                <div class="best-practices">
+                  <ul>
+                    <li><strong>API Gateway FAQ:</strong> Frequently asked questions and common issues</li>
+                    <li>Covers common troubleshooting scenarios and solutions</li>
+                    <li>Updated regularly with new issues and resolutions</li>
+                  </ul>
+                  <div class="playbook-reference">
+                    <a href="https://w.amazon.com/bin/view/AmazonWebServices/SalesSupport/DeveloperSupport/Internal/DMS/APIGateway/KnowledgeBase/FAQ" class="playbook-link" target="_blank">
+                      🔗 API Gateway Knowledge Base FAQ
+                    </a>
+                  </div>
+                </div>
+
+                <div class="section-header">🎓 Training Resources</div>
+                <div class="best-practices">
+                  <ul>
+                    <li><strong>Training Materials:</strong> Comprehensive learning resources</li>
+                    <li>Best practices and advanced troubleshooting techniques</li>
+                    <li>Service-specific training modules and guides</li>
+                  </ul>
+                  <div class="playbook-reference">
+                    <a href="https://w.amazon.com/bin/view/AmazonWebServices/SalesSupport/DeveloperSupport/Internal/DMS/APIGateway/Training/Resources" class="playbook-link" target="_blank">
+                      🔗 API Gateway Training Resources
+                    </a>
+                  </div>
+                </div>
+
+                <div class="note">
+                  💡 These internal resources provide in-depth knowledge and are regularly updated with the latest troubleshooting techniques and best practices.
+                </div>
+              </div>
+            `
           }
         ]
       },
