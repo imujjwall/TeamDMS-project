@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Node = ({ node, index }) => {
   const [isContentOpen, setIsContentOpen] = useState(false);
