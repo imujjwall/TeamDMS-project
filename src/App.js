@@ -28,11 +28,6 @@ function App() {
   return (
     <Router>
       <div className="app-wrapper" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <div className="emoji-decoration">🔄</div>
-        <div className="emoji-decoration">🗄️</div>
-        <div className="emoji-decoration">🔧</div>
-        <div className="emoji-decoration">⚙️</div>
-
         <div className="container">
           <NavigationBar />
           <div style={{ flex: 1 }}>

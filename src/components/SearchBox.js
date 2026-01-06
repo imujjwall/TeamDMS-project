@@ -4,7 +4,7 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
-  const flattenData = (nodes, path = []) => {
+  const flattenData = useCallback((nodes, path = []) => {
     let flattened = [];
     
     nodes.forEach(node => {
@@ -24,7 +24,24 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     });
     
     return flattened;
-  };
+  }, []);
+
+  const findNodeIdByPath = useCallback((nodes, pathArray, currentPath = []) => {
+    for (const node of nodes) {
+      const newPath = [...currentPath, node.title];
+      
+      if (pathArray.length === newPath.length && 
+          pathArray.every((segment, index) => segment === newPath[index])) {
+        return node.id;
+      }
+      
+      if (node.children && pathArray.length > newPath.length) {
+        const result = findNodeIdByPath(node.children, pathArray, newPath);
+        if (result) return result;
+      }
+    }
+    return null;
+  }, []);
 
   const searchInContent = useCallback((term) => {
     if (!term.trim()) {
@@ -59,24 +76,7 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
       
       onExpandNodes(Array.from(nodeIdsToExpand));
     }
-  }, [data, onSearchResults, onExpandNodes]);
-
-  const findNodeIdByPath = (nodes, pathArray, currentPath = []) => {
-    for (const node of nodes) {
-      const newPath = [...currentPath, node.title];
-      
-      if (pathArray.length === newPath.length && 
-          pathArray.every((segment, index) => segment === newPath[index])) {
-        return node.id;
-      }
-      
-      if (node.children && pathArray.length > newPath.length) {
-        const result = findNodeIdByPath(node.children, pathArray, newPath);
-        if (result) return result;
-      }
-    }
-    return null;
-  };
+  }, [data, onSearchResults, onExpandNodes, flattenData, findNodeIdByPath]);
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -86,18 +86,18 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, searchInContent]);
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter' && searchResults.length > 0) {
       const firstMatch = searchResults[0];
       onScrollToMatch(firstMatch.id);
     }
-  };
+  }, [searchResults, onScrollToMatch]);
 
-  const handleResultClick = (resultId) => {
+  const handleResultClick = useCallback((resultId) => {
     onScrollToMatch(resultId);
-  };
+  }, [onScrollToMatch]);
 
-  const handleExternalSearch = (platform, query) => {
+  const handleExternalSearch = useCallback((platform, query) => {
     const searchQuery = query || searchTerm || 'AWS serverless troubleshooting';
     let url = '';
     
@@ -116,7 +116,7 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     }
     
     window.open(url, '_blank');
-  };
+  }, [searchTerm]);
 
   return (
     <div className="search-container">
