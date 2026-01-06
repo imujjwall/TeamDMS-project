@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 
 // Default/fallback links that are always important
@@ -38,7 +38,7 @@ export const usePageTracking = () => {
   const location = useLocation();
 
   // Load visit data from localStorage
-  const loadVisitData = () => {
+  const loadVisitData = useCallback(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       return stored ? JSON.parse(stored) : {};
@@ -46,19 +46,19 @@ export const usePageTracking = () => {
       console.warn('Failed to load page visit data:', error);
       return {};
     }
-  };
+  }, []);
 
   // Save visit data to localStorage
-  const saveVisitData = (data) => {
+  const saveVisitData = useCallback((data) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
       console.warn('Failed to save page visit data:', error);
     }
-  };
+  }, []);
 
   // Track page visit
-  const trackPageVisit = (path) => {
+  const trackPageVisit = useCallback((path) => {
     if (!PAGE_MAPPING[path]) return; // Only track known pages
     
     const visitData = loadVisitData();
@@ -78,10 +78,10 @@ export const usePageTracking = () => {
     
     saveVisitData(visitData);
     return visitData;
-  };
+  }, [loadVisitData, saveVisitData]);
 
   // Calculate smart quick links using hybrid approach
-  const calculateQuickLinks = () => {
+  const calculateQuickLinks = useCallback(() => {
     const visitData = loadVisitData();
     const now = Date.now();
     const ONE_DAY = 24 * 60 * 60 * 1000;
@@ -143,7 +143,7 @@ export const usePageTracking = () => {
       .map(({ path, title }) => ({ path, title }));
     
     return topLinks;
-  };
+  }, [loadVisitData]);
 
   // Track current page visit and update quick links
   useEffect(() => {
@@ -155,13 +155,13 @@ export const usePageTracking = () => {
     // Recalculate quick links
     const newQuickLinks = calculateQuickLinks();
     setQuickLinks(newQuickLinks);
-  }, [location.pathname]);
+  }, [location.pathname, trackPageVisit, calculateQuickLinks]);
 
   // Initialize quick links on component mount
   useEffect(() => {
     const initialQuickLinks = calculateQuickLinks();
     setQuickLinks(initialQuickLinks);
-  }, []);
+  }, [calculateQuickLinks]);
 
   return quickLinks;
 };

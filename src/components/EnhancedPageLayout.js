@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Node from './Node';
@@ -15,7 +15,19 @@ const EnhancedPageLayout = ({
   const [filteredData, setFilteredData] = useState(data);
   const [allExpanded, setAllExpanded] = useState(false);
 
-  const handleSearchResults = (results) => {
+  const getSearchTerm = useCallback(() => {
+    const searchInput = document.querySelector('.search-input');
+    return searchInput ? searchInput.value : '';
+  }, []);
+
+  const highlightSearchTerm = useCallback((content, term) => {
+    if (!term) return content;
+    
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return content.replace(regex, '<span class="highlight">$1</span>');
+  }, []);
+
+  const handleSearchResults = useCallback((results) => {
     setSearchResults(results);
     
     if (results.length === 0) {
@@ -42,9 +54,9 @@ const EnhancedPageLayout = ({
       
       setFilteredData(filterNodes(data));
     }
-  };
+  }, [data, highlightSearchTerm, getSearchTerm]);
 
-  const handleExpandNodes = (nodeIds) => {
+  const handleExpandNodes = useCallback((nodeIds) => {
     setTimeout(() => {
       nodeIds.forEach(nodeId => {
         const element = document.getElementById(nodeId);
@@ -56,9 +68,9 @@ const EnhancedPageLayout = ({
         }
       });
     }, 100);
-  };
+  }, []);
 
-  const handleScrollToMatch = (nodeId) => {
+  const handleScrollToMatch = useCallback((nodeId) => {
     setTimeout(() => {
       const element = document.getElementById(nodeId);
       if (element) {
@@ -75,14 +87,9 @@ const EnhancedPageLayout = ({
         }, 3000);
       }
     }, 200);
-  };
+  }, []);
 
-  const getSearchTerm = () => {
-    const searchInput = document.querySelector('.search-input');
-    return searchInput ? searchInput.value : '';
-  };
-
-  const toggleAllNodes = () => {
+  const toggleAllNodes = useCallback(() => {
     const allToggleButtons = document.querySelectorAll('.toggle');
     const shouldExpand = !allExpanded;
     
@@ -96,14 +103,12 @@ const EnhancedPageLayout = ({
     });
     
     setAllExpanded(shouldExpand);
-  };
+  }, [allExpanded]);
 
-  const highlightSearchTerm = (content, term) => {
-    if (!term) return content;
-    
-    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return content.replace(regex, '<span class="highlight">$1</span>');
-  };
+  // Update filtered data when data prop changes
+  useEffect(() => {
+    setFilteredData(data);
+  }, [data]);
 
   return (
     <div className="page-content">
