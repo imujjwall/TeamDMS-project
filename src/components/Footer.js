@@ -37,7 +37,7 @@ const Footer = () => {
                 <span className="github-icon">👤</span>
                 Developer Profile
               </a>
-              <a href="https://phonetool.amazon.com/users/sriharaz" target="_blank" rel="noopener noreferrer" className="repo-link">
+              <a href="https://github.com/imujjwall/TeamDMS-project" target="_blank" rel="noopener noreferrer" className="repo-link">
                 <span className="repo-icon">📁</span>
                 Project Repository
               </a>
