@@ -5,8 +5,8 @@ function HomePage() {
   const serviceCategories = [
     {
       id: 'dms-troubleshooting',
-      title: 'DMS Troubleshooting',
-      description: 'Comprehensive troubleshooting guides for AWS Database Migration Service with detailed solutions and best practices',
+      title: 'DMS',
+      description: 'Developer Mobile, Messaging & IoT (DMI) and Serverless (SVLS) troubleshooting guides for Lambda, API Gateway, IoT, Connect, SQS, SNS, and mobile services',
       icon: '🔄',
       route: '/dms',
       available: true
@@ -38,7 +38,7 @@ function HomePage() {
     {
       id: 'networking',
       title: 'Networking',
-      description: 'VPC, Load Balancer, CloudFront, and networking troubleshooting with connectivity solutions',
+      description: 'Network Devices (NetDev), Network Infrastructure (NetInf), and Network Monitor & Scale (NetMnS) troubleshooting guides for VPC, Direct Connect, ELB, and networking services',
       icon: '🌐',
       route: '/networking',
       available: true
@@ -86,7 +86,7 @@ function HomePage() {
     {
       id: 'unified-operations',
       title: 'Unified Operations',
-      description: 'Gen-AI, MSS, and Telco troubleshooting guides for CloudWatch, Systems Manager, and unified operations monitoring',
+      description: 'Gen-AI, MSS (Media Support Solution), and Telco troubleshooting guides for GenAI services, media solutions, and telecommunications services',
       icon: '🔧',
       route: '/operations',
       available: true
