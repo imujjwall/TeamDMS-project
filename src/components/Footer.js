@@ -31,13 +31,13 @@ const Footer = () => {
         <div className="footer-section">
           <h4>Developer</h4>
           <div className="developer-info">
-            <p>Developed by <strong>Sai Srihari</strong></p>
+            <p>Developed by <strong>[NS Site]</strong></p>
             <div className="social-links">
-              <a href="https://phonetool.amazon.com/users/sriharaz" target="_blank" rel="noopener noreferrer" className="github-link">
+              <a href="https://phonetool.amazon.com/users/imujjwal" target="_blank" rel="noopener noreferrer" className="github-link">
                 <span className="github-icon">👤</span>
                 Developer Profile
               </a>
-              <a href="https://phonetool.amazon.com/users/sriharaz" target="_blank" rel="noopener noreferrer" className="repo-link">
+              <a href="https://github.com/sriharaz/TeamDMS-project" target="_blank" rel="noopener noreferrer" className="repo-link">
                 <span className="repo-icon">📁</span>
                 Project Repository
               </a>
