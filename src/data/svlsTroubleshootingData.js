@@ -551,4 +551,4 @@ const svlsTroubleshootingData = [
   }
 ];
 
-module.exports = { svlsTroubleshootingData };
+export { svlsTroubleshootingData };

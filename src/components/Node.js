@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CONSTANTS } from '../config/constants';
 
 const Node = ({ node, index }) => {
   const [isContentOpen, setIsContentOpen] = useState(false);
@@ -17,7 +18,7 @@ const Node = ({ node, index }) => {
     <div 
       className="node" 
       id={node.id}
-      style={{ animationDelay: `${index * 0.1}s` }}
+      style={{ animationDelay: `${index * CONSTANTS.NODE_ANIMATION_DELAY}s` }}
     >
       <div className="node-title">
         <span onClick={node.content ? toggleContent : undefined}>

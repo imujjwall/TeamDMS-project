@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { CONSTANTS } from '../config/constants';
 
 const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -81,7 +82,7 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       searchInContent(searchTerm);
-    }, 300);
+    }, CONSTANTS.SEARCH_DEBOUNCE_DELAY);
 
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, searchInContent]);
@@ -103,13 +104,13 @@ const SearchBox = ({ data, onSearchResults, onExpandNodes, onScrollToMatch }) =>
     
     switch (platform) {
       case 'repost':
-        url = `https://repost.aws/search/content?globalSearch=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}`;
+        url = `${CONSTANTS.EXTERNAL_SEARCH.REPOST}search/content?globalSearch=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}`;
         break;
       case 'guide':
-        url = `https://guide.aws.dev/search/content?globalSearch=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}`;
+        url = `${CONSTANTS.EXTERNAL_SEARCH.AWS_GUIDE}search/content?globalSearch=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}`;
         break;
       case 'google':
-        url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery).replace(/%20/g, '+')}+AWS`;
+        url = `${CONSTANTS.EXTERNAL_SEARCH.GOOGLE}${encodeURIComponent(searchQuery).replace(/%20/g, '+')}+AWS`;
         break;
       default:
         return;

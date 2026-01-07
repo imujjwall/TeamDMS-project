@@ -12,8 +12,15 @@ const EnhancedPageLayout = ({
   backLink = "/" 
 }) => {
   const [searchResults, setSearchResults] = useState([]);
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState(data || []);
   const [allExpanded, setAllExpanded] = useState(false);
+
+  // Update filteredData when data prop changes
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      setFilteredData(data);
+    }
+  }, [data]);
 
   const getSearchTerm = useCallback(() => {
     const searchInput = document.querySelector('.search-input');
@@ -31,9 +38,10 @@ const EnhancedPageLayout = ({
     setSearchResults(results);
     
     if (results.length === 0) {
-      setFilteredData(data);
+      setFilteredData(data || []);
     } else {
       const filterNodes = (nodes) => {
+        if (!Array.isArray(nodes)) return [];
         return nodes.map(node => {
           const hasMatch = results.some(result => result.id === node.id);
           const filteredChildren = node.children ? filterNodes(node.children) : [];
@@ -157,13 +165,17 @@ const EnhancedPageLayout = ({
         </div>
         
         <div className="mindmap">
-          {filteredData.map((node, index) => (
+          {filteredData && Array.isArray(filteredData) ? filteredData.map((node, index) => (
             <Node 
               key={node.id} 
               node={node} 
               index={index}
             />
-          ))}
+          )) : (
+            <div className="no-data">
+              <p>No data available</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

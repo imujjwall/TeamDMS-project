@@ -3,17 +3,14 @@ import './App.css';
 import ScrollToTop from './components/ScrollToTop';
 import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
+import ServicePageFactory from './components/ServicePageFactory';
 
+// Import static pages
 import HomePage from './pages/HomePage';
 import DMSPage from './pages/DMSPage';
 import ComingSoonPage from './pages/ComingSoonPage';
-
-import SVLSPage from './pages/SVLSPage';
-import DMIPage from './pages/DMIPage';
-import ELBPage from './pages/ELBPage';
 import NetworkingPage from './pages/NetworkingPage';
 import NetMnSPage from './pages/NetMnSPage';
-
 import DatabasePage from './pages/DatabasePage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import BigDataPage from './pages/BigDataPage';
@@ -24,7 +21,28 @@ import UnifiedOperationsPage from './pages/UnifiedOperationsPage';
 import WindowsPage from './pages/WindowsPage';
 import LinuxPage from './pages/LinuxPage';
 
+// Import route configuration
+import { STATIC_ROUTES, SERVICE_ROUTES } from './config/routes';
+
 function App() {
+  // Component mapping for static routes
+  const componentMap = {
+    HomePage,
+    DMSPage,
+    ComingSoonPage,
+    NetworkingPage,
+    NetMnSPage,
+    DatabasePage,
+    AnalyticsPage,
+    BigDataPage,
+    DeploymentPage,
+    SCDPage,
+    SecurityPage,
+    UnifiedOperationsPage,
+    WindowsPage,
+    LinuxPage
+  };
+
   return (
     <Router>
       <div className="app-wrapper" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -32,35 +50,33 @@ function App() {
           <NavigationBar />
           <div style={{ flex: 1 }}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              {/* Static routes */}
+              {STATIC_ROUTES.map(route => {
+                const Component = componentMap[route.component];
+                return Component ? (
+                  <Route 
+                    key={route.path} 
+                    path={route.path} 
+                    element={<Component />} 
+                  />
+                ) : null;
+              })}
               
-              <Route path="/dms" element={<DMSPage />} />
+              {/* Dynamic service routes */}
+              {SERVICE_ROUTES.map(route => (
+                <Route 
+                  key={route.path} 
+                  path={route.path} 
+                  element={<ServicePageFactory serviceId={route.serviceId} />} 
+                />
+              ))}
               
-              <Route path="/database" element={<DatabasePage />} />
-              <Route path="/analytics" element={<AnalyticsPage />} />
-              <Route path="/bigdata" element={<BigDataPage />} />
-              <Route path="/deployment" element={<DeploymentPage />} />
-              <Route path="/scd" element={<SCDPage />} />
-              <Route path="/security" element={<SecurityPage />} />
-              <Route path="/operations" element={<UnifiedOperationsPage />} />
-              <Route path="/windows" element={<WindowsPage />} />
-              <Route path="/linux" element={<LinuxPage />} />
-              
-              <Route path="/networking" element={<NetworkingPage />} />
-              <Route path="/netmns" element={<NetMnSPage />} />
-              
-              <Route path="/coming-soon" element={<ComingSoonPage />} />
-              
-              <Route path="/svls" element={<SVLSPage />} />
-              <Route path="/dmi" element={<DMIPage />} />
-              <Route path="/elb" element={<ELBPage />} />
-              
+              {/* Fallback route */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
           <Footer />
         </div>
-
         <ScrollToTop />
       </div>
     </Router>
