@@ -4,180 +4,735 @@ export const dmitroubleshootingdata = [
     title: "Amazon Connect Support Knowledge",
     children: [
       {
-        id: "approach",
-        title: "General Troubleshooting Guidance",
+        id: "dmi-general-approach",
+        title: "General Troubleshooting Approach",
         content: `
-          <div class="section-header">Initial Approach</div>
+          <div class="section-header">Initial Troubleshooting Steps</div>
           <div class="checklist">
             <ol>
-              <li><strong>Understand the customer's ask</strong>
+              <li><strong>Understand the customer's issue</strong>
                 <ul>
-                  <li>Get your understanding confirmed if you are in the meeting room with customer.</li>
-                  <li>Do not assume, Get all the resources or facts checked.</li>
+                  <li>Confirm your understanding if in a meeting with the customer</li>
+                  <li>Do not assume - verify all resources and facts</li>
+                  <li>Gather specific examples with timestamps</li>
                 </ul>
               </li>
-              <li><strong>Validate issue</strong>
+              <li><strong>Validate the issue</strong>
                 <ul>
-                  <li>Verify if the issue is about NMnS services or some other related service in the network flow/workflow causing the issue e.g. Ec2 or Lambda.</li>
+                  <li>Verify if issue is with Amazon Connect or related AWS services</li>
+                  <li>Check if issue is reproducible</li>
+                  <li>Determine scope: single agent, multiple agents, or instance-wide</li>
                 </ul>
               </li>
               <li><strong>Gather resource information</strong>
                 <ul>
-                  <li>Use internal tools (Atlas, Impersonation metric tool) to locate resources in question.</li>
-                  <li>Verify if you can observe the same issue (ALB 5xx data points, CW alarm state change, ASG EC2 termination events).</li>
+                  <li>Instance ARN</li>
+                  <li>Contact IDs of affected calls</li>
+                  <li>Agent usernames</li>
+                  <li>Timestamps and timezone</li>
+                  <li>Contact flow ARNs if applicable</li>
                 </ul>
               </li>
-              <li><strong>Follow troubleshooting steps for the specific service error.</strong></li>
-              <li><strong>Provide alternative solutions if the expected behavior is working.</strong></li>
-              <li><strong>Document/Note-down properly</strong>
+              <li><strong>Use diagnostic tools</strong>
                 <ul>
-                  <li>Annotate internal notes with resource links.</li>
-                  <li>Update SOC.</li>
+                  <li>Amazon Connect Check Connectivity Tool</li>
+                  <li>CCP logs</li>
+                  <li>Contact search and recordings</li>
+                  <li>CloudWatch metrics and logs</li>
+                </ul>
+              </li>
+              <li><strong>Document findings</strong>
+                <ul>
+                  <li>Annotate internal notes with resource links</li>
+                  <li>Update support tickets with findings</li>
+                  <li>Track patterns across multiple incidents</li>
                 </ul>
               </li>
             </ol>
           </div>
-
-          <div class="section-header">Basic TCP/HTTP(S) Flow</div>
-          <div class="checklist">
-            <table>
-              <tr>
-                <th>Protocol</th>
-                <th>Steps Performed</th>
-              </tr>
-              <tr>
-                <td>TCP</td>
-                <td>TCP 3-way handshake</td>
-              </tr>
-              <tr>
-                <td>SSL</td>
-                <td>TCP 3-way handshake + SSL negotiation</td>
-              </tr>
-              <tr>
-                <td>HTTP</td>
-                <td>TCP 3-way handshake + HTTP request</td>
-              </tr>
-              <tr>
-                <td>HTTPS</td>
-                <td>TCP 3-way handshake + SSL negotiation + HTTP request [Encrypted]</td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="section-header">Target Group Health Check Parameters</div>
-          <div class="checklist">
-            <ul>
-              <li><strong>Protocol:</strong> TCP or TLS or HTTP or HTTPS</li>
-              <li><strong>Port:</strong> Traffic port or Override port</li>
-              <li><strong>Path:</strong> URL path for health check (e.g., /health)</li>
-              <li><strong>Timeout:</strong> 2-120 seconds (how long to wait for response)</li>
-              <li><strong>Interval:</strong> 5-300 seconds (time between checks)</li>
-              <li><strong>Success Codes:</strong> Range of HTTP codes (200-399 default)</li>
-              <li><strong>Unhealthy Threshold:</strong> 2-10 failures to mark unhealthy</li>
-              <li><strong>Healthy Threshold:</strong> 2-10 successes to mark healthy</li>
-            </ul>
-          </div>
         `
       },
       {
-        id: "clb-alb",
-        title: "Validate connectivity to Amazon Connect with the Endpoint Test Utility",
+        id: "dmi-ccp-issues",
+        title: "Contact Control Panel (CCP) Issues",
         children: [
           {
-            id: "dns-resolution",
-            title: "DNS Resolution",
+            id: "ccp-connectivity",
+            title: "CCP Connectivity Issues",
             content: `
               <div class="troubleshooting">
-                <p>Run below dig/nslookup command to check if the customer's custom domain is resolving to ELB's IP addresses as displayed in Atlas WayPoint section.</p>
+                <div class="section-header">CCP Does Not Initialize/Connect</div>
+                <p><strong>Common Causes:</strong></p>
                 <ul>
-                  <code>For linux: $ dig +short custom_domain_name</code><br>
-                  <code>For linux & Windows: $ nslookup custom_domain_name</code>
+                  <li>Missing port/IP allowlist entries</li>
+                  <li>Browser microphone access not granted</li>
+                  <li>External device not answered (for desk phone)</li>
+                  <li>Multiple CCP tabs open simultaneously</li>
                 </ul>
-              </div>
-              <p class="note">
-                <strong>Note:</strong><br>
-                • Only active nodes IP address are published in the ELB DNS.<br>
-                • For CLB/ALB with more AZ's enabled, only a maximum of 8 IP addresses are published in DNS. Scaling out might cause it to have more nodes per AZ and can scale out up to a 100 nodes in total. Even though there is 100 nodes, single DNS query will be giving 8 IPs are any point of time. With each DNS query, Route53 resolver will rotate among the node IPs to provide an even distribution as possible.<br>
-                • Read more about how DNS resolution works in ELB <a href="https://w.amazon.com/bin/view/DSE/Request_Reply/Software_Load_Balancer/Developer_Docs/DataPlane/Runbooks/Waypoint/#How_does_DNS_Resolution_Work_for_ALB.3F">here</a>.
-              </p>
-            `
-          },
-          {
-            id: "connection-timeout",
-            title: "Connection Timeout",
-            content: `
-              <div class="troubleshooting">
-                <p>Verify customer's unable to connect to load balancer by running below test:</p>
+                
+                <p><strong>Troubleshooting Steps:</strong></p>
+                <ol>
+                  <li><strong>Run Connectivity Test:</strong>
+                    <ul>
+                      <li>Use Amazon Connect Check Connectivity Tool: <code>https://s3.amazonaws.com/connectivitytest/checkConnectivity.html</code></li>
+                      <li>Or newer version: <code>https://tools.connect.aws/endpoint-test/</code></li>
+                      <li>Check browser compatibility and version</li>
+                      <li>Verify microphone permissions</li>
+                      <li>Test network latency to AWS resources</li>
+                      <li>Ensure required ports are open</li>
+                    </ul>
+                  </li>
+                  <li><strong>Verify Network Configuration:</strong>
+                    <ul>
+                      <li>Ensure all IPs from <a href="https://docs.aws.amazon.com/connect/latest/adminguide/ccp-networking.html">Network Setup Guide</a> are allowlisted</li>
+                      <li>Check for recent ipranges.json updates</li>
+                      <li>Verify firewall rules allow WebSocket connections</li>
+                      <li>Test without VPN if applicable</li>
+                    </ul>
+                  </li>
+                  <li><strong>Browser Configuration:</strong>
+                    <ul>
+                      <li>Verify using supported browser (Chrome, Firefox, Edge)</li>
+                      <li>Check browser is one of latest 3 versions</li>
+                      <li>Clear browser cache and cookies</li>
+                      <li>Disable browser extensions that might interfere</li>
+                      <li>Ensure only one CCP tab is open</li>
+                    </ul>
+                  </li>
+                  <li><strong>Download CCP Logs:</strong>
+                    <ul>
+                      <li>Click settings cogwheel in CCP</li>
+                      <li>Select "Download logs"</li>
+                      <li>Analyze logs for connection errors</li>
+                      <li>Use CCP Log Parser tool for detailed analysis</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <div class="section-header">Periodic Connection Errors</div>
+                <p><strong>Common Causes:</strong></p>
                 <ul>
-                  <code>For linux & windows: $ telnet custom_domain_name port</code><br>
-                  <code>For Windows: $ curl -iv http(s)://custom_domain_name</code>
-                </ul>
-                <p>• Confirm customer has appropriate connectivity path configured to reach load balancer. Remember Internal load balancers are not accessible from the public internet by design.</p>
-                <p>• Verify route tables for all ELB subnets in Atlas to ensure proper IGW configuration and alternatively gateways (NAT, TGW, VGW) for internal ELBs</p>
-                <p>• Ensure there is no port access restrictions in subnet NACLs or Client IP allowlisting limitations and all required ephemeral ports (typically 1024-65535) are allowed in outbound rules.</p>
-                <p>• Check Security group restrictions blocking load balancer access like required port access not allowed or client/NAT IP not in allowlist using Atlas.</p>
-                <p>• If enabled VPC flow logs with metadata can help diagnose ELB connectivity issues by confirming if client SYN packets reach the load balancer and whether SYN-ACK responses are sent back, with missing SYN-ACK responses indicating a potential ELB node problem.</p>
-                <p>• If all above checks out, issue may exist between client and ELB like Client-side firewall. Use tools like traceroute, mtr, hping etc to learn the same.</p>
-                <p>• Additionally, simultaneous packet captures on the client machine can identify precisely which step of the TCP three-way handshake is failing during connection attempts.</p>
-                <ul>
-                  <code>sudo tcpdump -i any port listener_port_number -w traces.pcap</code>
-                </ul>
-              </div>
-            `
-          },
-          {
-            id: "connection-refused",
-            title: "Connection Refused",
-            content: `
-              <div class="troubleshooting">
-                <p>Verify customer's refused connection while requesting loadbalancer by running below test:</p>
-                <ul>
-                  <code>For linux & windows: $ telnet custom_domain_name</code><br>
-                  <code>For linux: $ curl -iv http(s)://custom_domain_name</code>
-                </ul>
-                <p>• Ensure ELB does has a listener configured for the port being accessed. Check the listeners on ELB Atlas page.</p>
-                <p>• Analyse enabled VPC flow logs with metadata on ELB nodes' interfaces and see if there is a packet with RST flag set from ELB.</p>
-                <p>• Nothing above confirms, a client-side firewall may be blocking access to the required port or IP address, so customers should verify their local firewall rules.</p>
-                <p>• Additionally, taking packet captures on the client machine to see the connection refused (RST packets from device sending it).</p>
-              </div>
-            `
-          },
-          {
-            id: "ssl-tls-issues",
-            title: "SSL/TLS Issues",
-            content: `
-              <div class="troubleshooting">
-                <p>Verify SSL/TLS issue on customer's end, by running below command:</p>
-                <ul>
-                  <code>For linux: $ curl -iv https://custom_domain_name</code><br>
-                  <code>For Windows Powershell: $ Test-NetConnection -ComputerName custom_domain_name -Port port_number</code>
-                </ul>
-                <p>• Check "InboundSSLNegotiationFailures" CW metric for CLB or "ClientTLSNegotiationErrorCount" CW metric for ALB with the data points for the timestamp in concern.</p>
-                <p>• Following are the most common reasons for SSL negotiation errors:</p>
-                <ul>
-                  <ol>
-                    <li>Cipher Suite and Protocol mismatch</li>
-                    <li>Certificate related issue</li>
-                  </ol>
+                  <li>Network contention</li>
+                  <li>Updated ipranges.json not added to allowlist</li>
+                  <li>Intermittent firewall issues</li>
+                  <li>Workstation resource constraints</li>
                 </ul>
 
-                <div class="section-header">Certificate related issues</div>
-                <p>• Access customers domain on any web browser to learn more on certificate-related issues such as domain name mismatches, expired certificates, or validation failures with self-signed certificates. The issues displayed are self-explanatory error messages.</p>
-                <p>• Upon learning the observed error message, you can examine an ELB's associated certificate by finding its ARN and then checking details like expiry date, valid domains, and key size through either the ACM or IAM tool, depending on the ARN.</p>
-                <p class="note">Note: ALB's SNI support allows multiple certificates per listener, with selection determined by a <a href="https://w.amazon.com/index.php/DSE/Request_Reply/Software_Load_Balancer/Developer_Docs/DataPlane/Playbooks/Waypoint#What_is_Smart_Certificate_Selection.3F">smart certificate selection algorithm.</a></p>
-
-                <div class="section-header">Protocol and Cipher mismatch</div>
-                <p>• SSL negotiation fails when the client and ELB have no matching SSL protocol version or cipher suite, which can be verified by checking the ELB's supported protocols and ciphers in the atlas page.</p>
-                <p>• Since this issue is highly client-dependent with varying support across different clients, it's essential to troubleshoot from the customer's or their clients' perspective rather than relying solely on your own testing environment.</p>
-                <p>• You can troubleshoot SSL negotiation issues by checking available protocols and ciphers using AWS CLI commands <a href="https://docs.aws.amazon.com/cli/latest/reference/elbv2/describe-ssl-policies.html">('describe-ssl-policies' for ALB)</a> or <a href="https://docs.aws.amazon.com/cli/latest/reference/elb/describe-load-balancer-policies.html">('describe-load-balancer-policies' for CLB)</a> and utilizing tools like OpenSSL and packet captures.</p>
+                <p><strong>Resolution:</strong></p>
                 <ul>
-                  <code><strong>OpenSSL command for TLSv1.2 showing certs:</strong> openssl s_client -connect domain_name:port_number -showcerts -tls1_2</code><br>
-                  <code><strong>Packet Capture:</strong> sudo tcpdump -i any port listener_port_number -w traces.pcap</code>
+                  <li>Monitor network bandwidth usage</li>
+                  <li>Check for AWS IP range updates</li>
+                  <li>Review CloudWatch metrics for patterns</li>
+                  <li>Verify workstation meets minimum requirements</li>
+                </ul>
+              </div>
+            `
+          },
+          {
+            id: "dmi-audio-issues",
+            title: "Audio Quality Issues",
+            content: `
+              <div class="troubleshooting">
+                <div class="section-header">One-Way Audio</div>
+                <p><strong>When agent can't hear caller OR caller can't hear agent:</strong></p>
+                
+                <p><strong>Troubleshooting Steps:</strong></p>
+                <ol>
+                  <li><strong>Check Headset Connectivity:</strong>
+                    <ul>
+                      <li>Windows: Device Manager → Audio inputs and outputs</li>
+                      <li>Verify computer recognizes headset</li>
+                      <li>Test with different USB port</li>
+                      <li>Try different headset if available</li>
+                      <li>Recommended: USB 2.0 headset</li>
+                    </ul>
+                  </li>
+                  <li><strong>Browser Microphone Permissions:</strong>
+                    <ul>
+                      <li><strong>Chrome:</strong> Settings → Site Settings → Microphone</li>
+                      <li><strong>Firefox:</strong> Click lock icon in address bar → Permissions</li>
+                      <li>Ensure correct headset is selected</li>
+                      <li>Grant permissions to CCP domain</li>
+                    </ul>
+                  </li>
+                  <li><strong>Check Call Recording:</strong>
+                    <ul>
+                      <li>Listen to recording to determine which channel has issue</li>
+                      <li>Agent audio = right channel</li>
+                      <li>Customer audio = left channel</li>
+                      <li>If both channels affected, likely network issue</li>
+                    </ul>
+                  </li>
+                  <li><strong>Network Diagnostics:</strong>
+                    <ul>
+                      <li>Check packet loss using WebRTC internals</li>
+                      <li>Verify bandwidth meets requirements (100Kbps per call minimum)</li>
+                      <li>Test latency to AWS region</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <div class="section-header">Audio Choppy/Cutting Out/Echo</div>
+                <p><strong>Common Causes:</strong></p>
+                <ul>
+                  <li>Network packet loss</li>
+                  <li>High jitter or latency</li>
+                  <li>Workstation resource contention</li>
+                  <li>Bandwidth limitations</li>
+                  <li>VPN configuration issues</li>
+                </ul>
+
+                <p><strong>Troubleshooting Steps:</strong></p>
+                <ol>
+                  <li><strong>Analyze Call Recording:</strong>
+                    <ul>
+                      <li>Use Audacity or similar tool to examine audio</li>
+                      <li>Identify which channel (agent/customer) has issues</li>
+                      <li>Check for consistent vs intermittent problems</li>
+                    </ul>
+                  </li>
+                  <li><strong>Check Network Metrics:</strong>
+                    <ul>
+                      <li>Review ToInstancePacketLossRate in CloudWatch</li>
+                      <li>Should be less than 20% packet loss</li>
+                      <li>Check for network congestion</li>
+                      <li>Verify internet speed (upload/download)</li>
+                    </ul>
+                  </li>
+                  <li><strong>Workstation Requirements:</strong>
+                    <ul>
+                      <li>Close unnecessary applications</li>
+                      <li>Check CPU and memory usage</li>
+                      <li>Verify meeting minimum system requirements</li>
+                      <li>Test with different workstation if possible</li>
+                    </ul>
+                  </li>
+                  <li><strong>WebRTC Capture:</strong>
+                    <ul>
+                      <li>Navigate to chrome://webrtc-internals/</li>
+                      <li>Enable "Create Dump" during call</li>
+                      <li>Analyze packet loss, jitter, and latency metrics</li>
+                      <li>Check Round Trip Time (should be < 300ms)</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <div class="section-header">Latency/Cross-Talk</div>
+                <p><strong>Symptoms:</strong> Delay between speaking and hearing, parties talking over each other</p>
+                <p><strong>Resolution:</strong></p>
+                <ul>
+                  <li>Calculate PSTN and agent latency</li>
+                  <li>Target: Round Trip Time < 300ms</li>
+                  <li>Check network path for bottlenecks</li>
+                  <li>Consider moving closer to router</li>
+                  <li>Disable VPN if not required</li>
+                  <li>Use wired connection instead of WiFi</li>
+                </ul>
+
+                <div class="section-header">Wobble (Audio Speed Variations)</div>
+                <p><strong>Cause:</strong> Media codecs compensating for high jitter and latency</p>
+                <p><strong>Resolution:</strong></p>
+                <ul>
+                  <li>Address underlying network issues</li>
+                  <li>Reduce jitter through QoS settings</li>
+                  <li>Improve network stability</li>
+                  <li>Check for bandwidth contention</li>
+                </ul>
+              </div>
+            `
+          },
+          {
+            id: "dmi-ccp-state-issues",
+            title: "CCP State and Call Handling Issues",
+            content: `
+              <div class="troubleshooting">
+                <div class="section-header">Missed Calls, State Change Delays, CCP Unresponsive</div>
+                <p><strong>Common Causes:</strong></p>
+                <ul>
+                  <li>Resource contention on agent workstation</li>
+                  <li>Network instability</li>
+                  <li>Poor connection to AWS resources</li>
+                  <li>Multiple CCP instances running</li>
+                </ul>
+
+                <p><strong>Note:</strong> Agents have 20 seconds to accept or reject a contact. If no action taken, status changes to "Missed" and contact routes to next available agent.</p>
+
+                <p><strong>Troubleshooting Steps:</strong></p>
+                <ol>
+                  <li>Check workstation resource usage (CPU, memory, disk)</li>
+                  <li>Verify network stability and bandwidth</li>
+                  <li>Ensure only one CCP tab/window is open</li>
+                  <li>Review CCP logs for timing issues</li>
+                  <li>Check for browser extensions causing conflicts</li>
+                  <li>Test with vanilla CCP (not embedded)</li>
+                </ol>
+
+                <div class="section-header">Call Disconnects</div>
+                <p><strong>Important:</strong> Note when during the call disconnections occur to identify patterns</p>
+                
+                <p><strong>Common Scenarios:</strong></p>
+                <ul>
+                  <li><strong>During transfer:</strong> May indicate third-party transfer issue</li>
+                  <li><strong>Circular transfers:</strong> Transferring out of and back into Connect</li>
+                  <li><strong>Random disconnects:</strong> Network or workstation issues</li>
+                  <li><strong>At specific times:</strong> May indicate scheduled maintenance or capacity issues</li>
+                </ul>
+
+                <p><strong>Diagnostic Steps:</strong></p>
+                <ol>
+                  <li>Review contact records for DisconnectDetails</li>
+                  <li>Check call recordings for audio before disconnect</li>
+                  <li>Analyze CloudWatch metrics for patterns</li>
+                  <li>Review contact flow logic for transfer blocks</li>
+                  <li>Check for AWS Health Dashboard notifications</li>
+                </ol>
+              </div>
+            `
+          }
+        ]
+      },
+      {
+        id: "dmi-setup-configuration",
+        title: "Setup and Configuration Issues",
+        children: [
+          {
+            id: "user-setup",
+            title: "User Setup and Permissions",
+            content: `
+              <div class="troubleshooting">
+                <div class="section-header">User Cannot Log Into Connect</div>
+                <p><strong>Required Configuration:</strong></p>
+                <ol>
+                  <li><strong>Correct Security Profile:</strong>
+                    <ul>
+                      <li>Verify user has appropriate security profile (e.g., 'Agent')</li>
+                      <li>Check permissions include "Access CCP"</li>
+                      <li>Confirm user can view required resources</li>
+                    </ul>
+                  </li>
+                  <li><strong>Correct Routing Profile:</strong>
+                    <ul>
+                      <li>User must be assigned to a routing profile</li>
+                      <li>Routing profile must have queues configured</li>
+                      <li>Verify channel settings (voice, chat, task)</li>
+                    </ul>
+                  </li>
+                  <li><strong>Username Format:</strong>
+                    <ul>
+                      <li>Must match exactly (case-sensitive)</li>
+                      <li>No special characters unless required</li>
+                      <li>Format: username@domain (if using SAML)</li>
+                    </ul>
+                  </li>
+                  <li><strong>Agent Hierarchy:</strong>
+                    <ul>
+                      <li>User should be assigned to appropriate hierarchy</li>
+                      <li>Required for reporting and metrics</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <div class="section-header">Agent Cannot Access Recordings</div>
+                <p><strong>Requirements:</strong></p>
+                <ul>
+                  <li>Security profile must have "Listen" enabled under "Metrics and Quality > Call recordings"</li>
+                  <li>User must have active Connect session</li>
+                  <li>Recordings must be enabled in instance settings</li>
+                  <li>S3 bucket permissions must be configured correctly</li>
+                </ul>
+              </div>
+            `
+          },
+          {
+            id: "dmi-instance-configuration",
+            title: "Instance Configuration",
+            content: `
+              <div class="troubleshooting">
+                <div class="section-header">Instance Setup Requirements</div>
+                <ol>
+                  <li><strong>Identity Management:</strong>
+                    <ul>
+                      <li>Choose between SAML 2.0 or Connect user management</li>
+                      <li>Configure SSO if using SAML</li>
+                      <li>Set up access URL with standard naming</li>
+                    </ul>
+                  </li>
+                  <li><strong>Telephony Options:</strong>
+                    <ul>
+                      <li>Enable incoming calls</li>
+                      <li>Enable outbound calls if needed</li>
+                      <li>Configure early media if required</li>
+                    </ul>
+                  </li>
+                  <li><strong>Data Storage:</strong>
+                    <ul>
+                      <li>Configure S3 bucket for call recordings</li>
+                      <li>Set up bucket for exported reports</li>
+                      <li>Enable contact flow logs</li>
+                      <li>Configure encryption settings</li>
+                    </ul>
+                  </li>
+                  <li><strong>Hours of Operation:</strong>
+                    <ul>
+                      <li>Define business hours for each queue</li>
+                      <li>Set timezone correctly</li>
+                      <li>Configure holiday schedules</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <div class="section-header">Phone Number Issues</div>
+                <p><strong>Claiming/Porting Numbers:</strong></p>
+                <ul>
+                  <li>Verify number availability in desired region</li>
+                  <li>Complete porting documentation accurately</li>
+                  <li>Allow sufficient time for porting process</li>
+                  <li>Test numbers after claiming/porting</li>
+                  <li>Associate numbers with correct contact flows</li>
+                </ul>
+              </div>
+            `
+          },
+          {
+            id: "dmi-routing-configuration",
+            title: "Routing Profiles and Queues",
+            content: `
+              <div class="troubleshooting">
+                <div class="section-header">Routing Profile Configuration</div>
+                <p><strong>Key Components:</strong></p>
+                <ul>
+                  <li><strong>Media Concurrency:</strong> How many contacts agent can handle simultaneously</li>
+                  <li><strong>Default Outbound Queue:</strong> Queue used for outbound calls</li>
+                  <li><strong>Queue Associations:</strong> Which queues agent can receive contacts from</li>
+                  <li><strong>Priority Settings:</strong> Order in which queues are checked</li>
+                  <li><strong>Delay Settings:</strong> Time before checking next priority queue</li>
+                </ul>
+
+                <p><strong>Common Issues:</strong></p>
+                <ol>
+                  <li><strong>Agent Not Receiving Calls:</strong>
+                    <ul>
+                      <li>Verify routing profile has correct queues</li>
+                      <li>Check queue has contacts waiting</li>
+                      <li>Confirm agent status is "Available"</li>
+                      <li>Review priority and delay settings</li>
+                    </ul>
+                  </li>
+                  <li><strong>Calls Going to Wrong Agents:</strong>
+                    <ul>
+                      <li>Review routing profile assignments</li>
+                      <li>Check queue priority settings</li>
+                      <li>Verify contact flow routing logic</li>
+                    </ul>
+                  </li>
+                </ol>
+
+                <div class="section-header">Queue Configuration</div>
+                <p><strong>Essential Settings:</strong></p>
+                <ul>
+                  <li>Queue name and description</li>
+                  <li>Hours of operation</li>
+                  <li>Outbound caller ID (if applicable)</li>
+                  <li>Maximum contacts in queue</li>
+                  <li>Quick connects for transfers</li>
                 </ul>
               </div>
             `
           }
         ]
+      },
+      {
+        id: "dmi-contact-flows",
+        title: "Contact Flow Issues",
+        children: [
+          {
+            id: "flow-errors",
+            title: "Contact Flow Errors",
+            content: `
+              <div class="troubleshooting">
+                <div class="section-header">Troubleshooting Contact Flow Issues</div>
+                <p><strong>Enable Contact Flow Logs:</strong></p>
+                <ol>
+                  <li>Add "Set logging behavior" block to contact flow</li>
+                  <li>Enable logging in CloudWatch</li>
+                  <li>Review logs for errors and execution path</li>
+                </ol>
+
+                <p><strong>Common Flow Errors:</strong></p>
+                <ul>
+                  <li><strong>Lambda Function Failures:</strong>
+                    <ul>
+                      <li>Check Lambda function logs in CloudWatch</li>
+                      <li>Verify function has correct permissions</li>
+                      <li>Test function independently</li>
+                      <li>Check timeout settings</li>
+                      <li>Review error handling in flow</li>
+                    </ul>
+                  </li>
+                  <li><strong>Invalid Attribute References:</strong>
+                    <ul>
+                      <li>Verify attribute names are correct</li>
+                      <li>Check attribute is set before use</li>
+                      <li>Use proper syntax: $.Attributes.AttributeName</li>
+                    </ul>
+                  </li>
+                  <li><strong>Queue Transfer Failures:</strong>
+                    <ul>
+                      <li>Verify queue exists and is active</li>
+                      <li>Check hours of operation</li>
+                      <li>Ensure agents are available</li>
+                      <li>Review queue capacity settings</li>
+                    </ul>
+                  </li>
+                  <li><strong>Missing Error Branches:</strong>
+                    <ul>
+                      <li>Always configure error branches</li>
+                      <li>Add disconnect block for error paths</li>
+                      <li>Log errors for troubleshooting</li>
+                    </ul>
+                  </li>
+                </ul>
+
+                <div class="section-header">Testing Contact Flows</div>
+                <p><strong>Best Practices:</strong></p>
+                <ol>
+                  <li>Test in non-production environment first</li>
+                  <li>Use test phone numbers</li>
+                  <li>Review contact flow logs after each test</li>
+                  <li>Test all branches and error conditions</li>
+                  <li>Verify prompts play correctly</li>
+                  <li>Check attribute values are set correctly</li>
+                </ol>
+              </div>
+            `
+          }
+        ]
+      },
+      {
+        id: "dmi-network-requirements",
+        title: "Network Requirements and Configuration",
+        content: `
+          <div class="troubleshooting">
+            <div class="section-header">Network Configuration Requirements</div>
+            <p><strong>Required Ports and Protocols:</strong></p>
+            <table>
+              <tr>
+                <th>Port</th>
+                <th>Protocol</th>
+                <th>Purpose</th>
+              </tr>
+              <tr>
+                <td>443</td>
+                <td>TCP</td>
+                <td>HTTPS for signaling and API calls</td>
+              </tr>
+              <tr>
+                <td>3478</td>
+                <td>UDP</td>
+                <td>Softphone media (STUN/TURN)</td>
+              </tr>
+            </table>
+
+            <p><strong>Required Domains to Allowlist:</strong></p>
+            <ul>
+              <li>*.my.connect.aws - CCP and admin console</li>
+              <li>*.transport.connect.[region].amazonaws.com - WebSocket traffic</li>
+              <li>turnNlb-*.elb.* - Softphone media</li>
+              <li>*.cloudfront.net - Static CCP assets</li>
+            </ul>
+
+            <p><strong>IP Address Ranges:</strong></p>
+            <ul>
+              <li>Download latest ranges from: <code>https://ip-ranges.amazonaws.com/ip-ranges.json</code></li>
+              <li>Filter for "AMAZON_CONNECT" service</li>
+              <li>Include all CIDR ranges for your region</li>
+              <li>Update allowlist when AWS publishes changes</li>
+            </ul>
+
+            <div class="section-header">Bandwidth Requirements</div>
+            <ul>
+              <li><strong>Minimum per call:</strong> 100 Kbps</li>
+              <li><strong>Recommended:</strong> 200 Kbps per concurrent call</li>
+              <li><strong>For video:</strong> Additional 1-2 Mbps per video call</li>
+            </ul>
+
+            <div class="section-header">VPN Considerations</div>
+            <p><strong>Recommended Configuration:</strong></p>
+            <ul>
+              <li>Use split tunneling for Connect traffic</li>
+              <li>Exclude Connect domains from VPN routing</li>
+              <li>If full tunnel required, ensure VPN supports WebRTC</li>
+              <li>Test latency through VPN (should be < 300ms RTT)</li>
+            </ul>
+
+            <div class="section-header">Firewall Configuration</div>
+            <p><strong>Requirements:</strong></p>
+            <ul>
+              <li>Allow WebSocket connections (wss://)</li>
+              <li>Do not perform SSL inspection on Connect traffic</li>
+              <li>Allow UDP traffic on port 3478</li>
+              <li>Configure stateful firewall rules</li>
+              <li>Allow all ephemeral ports for return traffic</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "dmi-monitoring-metrics",
+        title: "Monitoring and Metrics",
+        content: `
+          <div class="troubleshooting">
+            <div class="section-header">Key CloudWatch Metrics</div>
+            <table>
+              <tr>
+                <th>Metric</th>
+                <th>Description</th>
+                <th>Threshold</th>
+              </tr>
+              <tr>
+                <td>ToInstancePacketLossRate</td>
+                <td>Packet loss from agent to Connect</td>
+                <td>< 20%</td>
+              </tr>
+              <tr>
+                <td>CallsBreachingConcurrencyQuota</td>
+                <td>Calls exceeding concurrent call limit</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>MissedCalls</td>
+                <td>Calls not answered by agents</td>
+                <td>Monitor trend</td>
+              </tr>
+              <tr>
+                <td>ContactFlowErrors</td>
+                <td>Errors in contact flow execution</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>ThrottledCalls</td>
+                <td>API calls being throttled</td>
+                <td>0</td>
+              </tr>
+            </table>
+
+            <div class="section-header">Real-Time Monitoring</div>
+            <p><strong>Available Metrics:</strong></p>
+            <ul>
+              <li>Agents online/available/on call</li>
+              <li>Contacts in queue</li>
+              <li>Oldest contact in queue</li>
+              <li>Service level performance</li>
+              <li>Average handle time</li>
+            </ul>
+
+            <div class="section-header">Historical Reports</div>
+            <p><strong>Key Reports:</strong></p>
+            <ul>
+              <li>Agent activity audit</li>
+              <li>Contact search with filters</li>
+              <li>Login/logout report</li>
+              <li>Queue performance</li>
+              <li>Contact flow execution</li>
+            </ul>
+
+            <div class="section-header">Contact Search</div>
+            <p><strong>Search Capabilities:</strong></p>
+            <ul>
+              <li>By contact ID</li>
+              <li>By phone number</li>
+              <li>By agent username</li>
+              <li>By queue</li>
+              <li>By date/time range</li>
+              <li>By conversation characteristics (Contact Lens)</li>
+              <li>By keywords (Contact Lens)</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        id: "dmi-escalation",
+        title: "When to Escalate to AWS Support",
+        content: `
+          <div class="troubleshooting">
+            <div class="section-header">Information to Gather Before Opening Case</div>
+            <p><strong>Required Information:</strong></p>
+            <ol>
+              <li><strong>Instance Details:</strong>
+                <ul>
+                  <li>Instance ARN</li>
+                  <li>AWS Region</li>
+                  <li>Instance alias/URL</li>
+                </ul>
+              </li>
+              <li><strong>Issue Details:</strong>
+                <ul>
+                  <li>5+ affected contact IDs (from last 24-48 hours)</li>
+                  <li>Timestamp when issue started (with timezone)</li>
+                  <li>Frequency: constant, intermittent, specific times</li>
+                  <li>Scope: single agent, multiple agents, all agents</li>
+                </ul>
+              </li>
+              <li><strong>Diagnostic Data:</strong>
+                <ul>
+                  <li>CCP logs from affected agents</li>
+                  <li>Call recordings (if audio issue)</li>
+                  <li>Contact flow ARN (if flow issue)</li>
+                  <li>Endpoint test results</li>
+                  <li>WebRTC capture (if audio issue)</li>
+                </ul>
+              </li>
+              <li><strong>Troubleshooting Performed:</strong>
+                <ul>
+                  <li>Steps already taken</li>
+                  <li>Results of diagnostic tests</li>
+                  <li>Any recent changes to configuration</li>
+                </ul>
+              </li>
+            </ol>
+
+            <div class="section-header">Severity Guidelines</div>
+            <table>
+              <tr>
+                <th>Severity</th>
+                <th>Description</th>
+                <th>Response Time</th>
+              </tr>
+              <tr>
+                <td>Critical</td>
+                <td>Production system down, business-critical impact</td>
+                <td>< 1 hour</td>
+              </tr>
+              <tr>
+                <td>Urgent</td>
+                <td>Production system impaired, significant business impact</td>
+                <td>< 4 hours</td>
+              </tr>
+              <tr>
+                <td>High</td>
+                <td>Important functions impaired or degraded</td>
+                <td>< 12 hours</td>
+              </tr>
+              <tr>
+                <td>Normal</td>
+                <td>General questions, feature requests</td>
+                <td>< 24 hours</td>
+              </tr>
+            </table>
+
+            <div class="section-header">Escalation Scenarios</div>
+            <p><strong>Escalate to AWS Support when:</strong></p>
+            <ul>
+              <li>Issue affects multiple agents or entire instance</li>
+              <li>Audio quality issues persist after agent-side troubleshooting</li>
+              <li>Contact flow errors with no clear cause</li>
+              <li>API throttling or service limits reached</li>
+              <li>Suspected AWS service issue</li>
+              <li>Need to increase service quotas</li>
+              <li>Telephony issues (call routing, PSTN connectivity)</li>
+            </ul>
+          </div>
+        `
       }
     ]
   }
